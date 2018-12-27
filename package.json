@@ -1,0 +1,17 @@
+{
+  "name": "reduxoo",
+  "version": "1.0.0",
+  "description": "Make using redux a little more OOP.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lemons",
+  "license": "ISC",
+  "dependencies": {
+    "redux": "^4.0.1"
+  }
+}
