@@ -6,9 +6,7 @@ const DELETE = "REDUXOO_DELETE";
 export default class MapIndex extends StateIndex {
 
   constructor(initialState = {}) {
-    super(initialState)
-    this.index = this.constructor.name;
-    this.state = initialState;
+    super(initialState);
   }
 
   reduce(action) {
@@ -19,6 +17,9 @@ export default class MapIndex extends StateIndex {
         break;
       case DELETE:
         delete state[action.key];
+        break;
+      default:
+        state = super.reduce(action);
         break;
     }
     this.state = state;

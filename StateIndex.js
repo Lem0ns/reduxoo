@@ -29,7 +29,7 @@ export default class StateIndex {
     return this.store.dispatch({
       type: SET_STATE,
       index: this.index,
-      state: state,
+      state: state
     });
   }
 

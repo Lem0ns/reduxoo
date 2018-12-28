@@ -25,13 +25,16 @@ export default class Store {
           state[action.index] = dataType.reduce(action);
 
         // Send the states
-        (this.subscriptions.get(action.index) || []).forEach(val => val(state[action.index]));
-        (this.subscriptions.get('_root') || []).forEach(val => val(state));
+        setImmediate(function (state, action) {
+          (this.subscriptions.get(action.index) || []).forEach(val => val(state[action.index]));
+          (this.subscriptions.get('_root') || []).forEach(val => val(state));
+        }.bind(this), state, action);
       } else if (action.type === REDUXOO_REFRESH) {
         (this.subscriptions.get('_root') || []).forEach(val => val(state));
       } else {
         console.log("Unknown action", action);
       }
+      this.state = state;
       return state;
     }
 
@@ -56,7 +59,7 @@ export default class Store {
   }
 
   getState() {
-    return this.store.getState();
+    return this.state;
   }
 
   dispatch(action) {
@@ -71,11 +74,11 @@ export default class Store {
     let map = this.subscriptions.get(index) || [];
     map.push(listener);
     // Dispatch a refresh command to initialize the new listener without using getStore()
-    this.store.dispatch({
-      type: REDUXOO_REFRESH,
-      index: index
-    })
+    listener(index === '_root' ? this.state : this.state[index]);
     this.subscriptions.set(index, map);
+    return () => {
+      this.subscriptions.delete(index);
+    };
   }
 
   unsubscribe(index, listener) {
@@ -83,7 +86,7 @@ export default class Store {
       listener = index;
       index = '_root';
     }
-    let map = this.subscriptions.get(listener) || [];
+    let map = this.subscriptions.get(index) || [];
     let i = map.indexOf(listener);
     if (i > -1)
       map.splice(i, 1);
